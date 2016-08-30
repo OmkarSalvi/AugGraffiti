@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements
             //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
             Intent myIntent = new Intent(MainActivity.this, Activity2.class);
             myIntent.putExtra("key", "omkar rocks"); //Optional parameters
+            finish();
             MainActivity.this.startActivity(myIntent);
         } else {
             mStatusTextView.setText(R.string.signed_out);
