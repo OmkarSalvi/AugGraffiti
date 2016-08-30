@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AugGraffiti</string>
+    <string name="signed_out">Signed out as: %s</string>
+    <string name="signed_in_fmt">Signed in as: %s</string>
+</resources>
