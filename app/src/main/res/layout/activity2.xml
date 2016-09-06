@@ -7,11 +7,21 @@
     tools:context="com.example.salvi.auggraffiti.Activity2"
     android:weightSum="1">
 
-    <com.google.android.gms.common.SignInButton
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.salvi.auggraffiti.Activity2" />
+
+    <Button
         android:id="@+id/sign_out_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
+        android:text="Sign out"
         tools:visibility="gone"/>
 
     <TextView
@@ -31,7 +41,9 @@
         android:text="Points"
         android:textColor="@android:color/black"
         android:id="@+id/Points_textView"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
     <Button
         android:layout_width="wrap_content"

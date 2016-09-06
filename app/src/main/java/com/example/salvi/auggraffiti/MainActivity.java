@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements
         View.OnClickListener {
 
     private GoogleApiClient mGoogleApiClient;
-    private TextView mStatusTextView;
+    //private TextView mStatusTextView;
     private static final String TAG = MainActivity.class.getName();
     private static final int RC_SIGN_IN = 9001;
     //private Button SignIn_Button;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements
 
         //SignIn_Button = (Button) findViewById(R.id.sign_in_button);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        mStatusTextView = (TextView) findViewById(R.id.status);
+        //mStatusTextView = (TextView) findViewById(R.id.status);
 
         // Configure sign-in to request the user's ID, email address, and basic profile. ID and
         // basic profile are included in DEFAULT_SIGN_IN.
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements
             finish();
             MainActivity.this.startActivity(myIntent);
         } else {
-            mStatusTextView.setText(R.string.signed_out);
+           // mStatusTextView.setText(R.string.signed_out);
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
