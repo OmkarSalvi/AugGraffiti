@@ -2,6 +2,10 @@ package com.example.salvi.auggraffiti;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -27,6 +32,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -34,9 +40,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * Created by salvi on 8/28/2016.
  */
 public class Activity2 extends FragmentActivity implements
+        LocationListener,
         OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener{
+        GoogleApiClient.OnConnectionFailedListener
+        {
 
     private GoogleApiClient mGoogleApiClient;
     //private TextView mStatusTextView;
@@ -44,16 +51,22 @@ public class Activity2 extends FragmentActivity implements
     private static final int RC_SIGN_IN = 9001;
     //private Button SignOut_Button;
     GoogleMap googleMap;
+    LatLng myPosition;
+    Marker marker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity2);
+        if (!isGooglePlayServicesAvailable()) {
+            finish();
+        }
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        googleMap = mapFragment.getMap();
         Intent intent = getIntent();
         String value = intent.getStringExtra("key"); //if it's a string you stored.
         Log.d(TAG, "message received : " + value);
@@ -84,18 +97,74 @@ public class Activity2 extends FragmentActivity implements
             }
         });
 
+        //googleMap.setMyLocationEnabled(true);
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        String bestProvider = locationManager.getBestProvider(criteria, true);
+        Location location = locationManager.getLastKnownLocation(bestProvider);
+        if (location != null) {
+            double latitude = location.getLatitude();
+
+            // Getting longitude of the current location
+            double longitude = location.getLongitude();
+
+            // Creating a LatLng object for the current location
+            LatLng latLng = new LatLng(latitude, longitude);
+
+            //myPosition = new LatLng(latitude, longitude);
+
+            //googleMap.addMarker(new MarkerOptions().position(myPosition).title("Start"));
+            onLocationChanged(location);
+        }
+        locationManager.requestLocationUpdates(bestProvider, 2000, 0, this);
 
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        if(marker != null){
+            marker.remove();
+        }
+        TextView locationTv = (TextView) findViewById(R.id.status);
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        LatLng latLng = new LatLng(latitude, longitude);
+        marker = googleMap.addMarker(new MarkerOptions().position(latLng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
+    }
 
+    @Override
+    public void onProviderDisabled(String provider) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // TODO Auto-generated method stub
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap = googleMap;
 
+
+        /*
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        */
     }
 
     @Override
@@ -135,14 +204,14 @@ public class Activity2 extends FragmentActivity implements
                 });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.sign_out_button:
-                Log.d(TAG, "calling signout");
-                signOut();
-                break;
-            // ...
+
+    private boolean isGooglePlayServicesAvailable() {
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (ConnectionResult.SUCCESS == status) {
+            return true;
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(status, this, 0).show();
+            return false;
         }
     }
 }
