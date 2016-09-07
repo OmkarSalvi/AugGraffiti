@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -46,7 +47,7 @@ public class Activity2 extends FragmentActivity implements
         {
 
     private GoogleApiClient mGoogleApiClient;
-    //private TextView mStatusTextView;
+    private TextView mStatusTextView;
     private static final String TAG = Activity2.class.getName();
     private static final int RC_SIGN_IN = 9001;
     //private Button SignOut_Button;
@@ -73,8 +74,8 @@ public class Activity2 extends FragmentActivity implements
 
         Button SignOut_Button = (Button) findViewById(R.id.sign_out_button);
         //findViewById(R.id.sign_out_button).setOnClickListener(this);
-        //mStatusTextView = (TextView) findViewById(R.id.status);
-
+        mStatusTextView = (TextView) findViewById(R.id.Points_textView);
+        mStatusTextView.setText("email :" + value);
         // Configure sign-in to request the user's ID, email address, and basic profile. ID and
         // basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -123,6 +124,21 @@ public class Activity2 extends FragmentActivity implements
         }
         locationManager.requestLocationUpdates(bestProvider, 2000, 0, this);
 
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
+        {
+
+            @Override
+            public boolean onMarkerClick(Marker arg0) {
+                //if(arg0.getTitle().equals("MyHome")) // if marker source is clicked
+                Toast.makeText(Activity2.this, "marker clicked", Toast.LENGTH_SHORT).show();// display toast
+                Intent myIntent = new Intent(Activity2.this, Place.class);
+                myIntent.putExtra("key", "Omkar clicked the marker"); //Optional parameters
+                //finish();
+                Activity2.this.startActivity(myIntent);
+                return true;
+            }
+
+        });
     }
 
     @Override

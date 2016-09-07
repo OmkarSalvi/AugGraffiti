@@ -20,6 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TAG = MainActivity.class.getName();
     private static final int RC_SIGN_IN = 9001;
     //private Button SignIn_Button;
+    public static String User_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            GoogleSignInAccount acct = result.getSignInAccount();
+            String personName = acct.getDisplayName();
+            User_email = acct.getEmail();
             handleSignInResult(result);
         }
     }
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
             Intent myIntent = new Intent(MainActivity.this, Activity2.class);
-            myIntent.putExtra("key", "omkar rocks"); //Optional parameters
+            myIntent.putExtra("key", User_email); //Optional parameters
             finish();
             MainActivity.this.startActivity(myIntent);
         } else {
