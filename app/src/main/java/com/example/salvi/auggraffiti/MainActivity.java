@@ -1,5 +1,6 @@
 package com.example.salvi.auggraffiti;
 
+import android.service.voice.VoiceInteractionSession;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.ProgressDialog;
@@ -10,6 +11,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,11 +30,14 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.server.converter.StringToIntConverter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
-
+    //test comment
     private GoogleApiClient mGoogleApiClient;
     //private TextView mStatusTextView;
     private static final String TAG = MainActivity.class.getName();
@@ -82,8 +93,11 @@ public class MainActivity extends AppCompatActivity implements
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             GoogleSignInAccount acct = result.getSignInAccount();
-            String personName = acct.getDisplayName();
-            User_email = acct.getEmail();
+           // if(acct != null){
+                String personName = acct.getDisplayName().toString();
+                User_email = acct.getEmail().toString();
+           // }
+
             handleSignInResult(result);
         }
     }
@@ -111,11 +125,46 @@ public class MainActivity extends AppCompatActivity implements
             GoogleSignInAccount acct = result.getSignInAccount();
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
-        } else {
+
+            // Instantiate the RequestQueue
+            RequestQueue queue = Volley.newRequestQueue(this);
+            final String userEmail = getString(R.string.signed_in_fmt);
+            final String loginURL = "http://roblkw.com/msa/login.php";
+            // Request a string response from the provided URL.
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, loginURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if(response != "0"){
+                                Log.d(TAG, "Response is : " + response);
+                                return;
+                            }
+                            Log.d(TAG, "Response is : " + response);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d(TAG, "Error occurred : That didn't work!");
+                }
+            }
+            ){
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params_map = new HashMap<String, String>();
+                    params_map.put("email", userEmail);
+                    return params_map;
+                }
+            };
+            // Add the request to the RequestQueue.
+            queue.add(stringRequest);
+        }//---end if
+
+        else {
             // Signed out, show unauthenticated UI.
+
             updateUI(false);
         }
-    }
+    }//--- end method
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);

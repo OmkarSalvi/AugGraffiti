@@ -22,6 +22,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +45,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
+//-----importing classes to perform service
+import android.os.IBinder;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+
+//----importing package.superClass.binderClass
+import com.example.salvi.auggraffiti.nearTagService.MyLocalBinder;
+
 
 /**
  * Created by salvi on 8/28/2016.
@@ -48,6 +67,10 @@ public class Activity2 extends FragmentActivity implements
         OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener
         {
+
+            nearTagService objNearTagService;
+            boolean isBound = false;
+
 
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
@@ -62,6 +85,12 @@ public class Activity2 extends FragmentActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity2);
+
+        //-------------
+        Intent objIntent = new Intent(this, nearTagService.class);
+        bindService(objIntent, objServiceConnection, Context.BIND_AUTO_CREATE);
+        //-------------
+
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
@@ -123,6 +152,7 @@ public class Activity2 extends FragmentActivity implements
             return;
         }
 
+
         Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             double latitude = location.getLatitude();
@@ -163,13 +193,33 @@ public class Activity2 extends FragmentActivity implements
             marker.remove();
         }
         TextView locationTv = (TextView) findViewById(R.id.status);
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+        final double latitude = location.getLatitude();
+        final double longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
         marker = googleMap.addMarker(new MarkerOptions().position(latLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         locationTv.setText("Latitude:" + latitude + ", Longitude:" + longitude);
+
+        //----
+        String tagsResonse;
+        final String strEmail = "abhishekpatil369@gmail.com";
+        objNearTagService.getNearTags(strEmail,TAG,String.valueOf(longitude),String.valueOf(latitude));
+        tagsResonse= objNearTagService.getNearTagsResponse();
+        if(tagsResonse !=""){
+            handleNearTagsResult(tagsResonse);
+        }
+        //----
+
+    }
+    private void handleNearTagsResult(String response){
+        String objResponse[] = response.split(",");
+        int i=0;
+        for(i = 0; i< objResponse.length; i = i+2){
+            Log.d(TAG, "Tag id: " + objResponse[i]+ " With Longitude: "+objResponse[i+1] + " With Latitude: "+objResponse[i+2]);
+            LatLng latLng = new LatLng(Double.parseDouble(objResponse[i + 1]), Double.parseDouble(objResponse[i + 2]));
+            marker = googleMap.addMarker(new MarkerOptions().position(latLng).title("ID"));
+        }
     }
 
     @Override
@@ -189,7 +239,6 @@ public class Activity2 extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap = googleMap;
-
 
         /*
         // Add a marker in Sydney and move the camera
@@ -246,4 +295,23 @@ public class Activity2 extends FragmentActivity implements
             return false;
         }
     }
+
+
+            public ServiceConnection objServiceConnection = new ServiceConnection() {
+
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            //create binder to get access to service class
+            MyLocalBinder binder = (MyLocalBinder) service;
+            // access class to get access
+            objNearTagService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    }; // end Service Connection
 }
