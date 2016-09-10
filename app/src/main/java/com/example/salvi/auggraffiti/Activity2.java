@@ -2,14 +2,17 @@ package com.example.salvi.auggraffiti;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -99,7 +102,13 @@ public class Activity2 extends FragmentActivity implements
         });
 
         //googleMap.setMyLocationEnabled(true);
+
+        //---------
+
+
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setAltitudeRequired(false);
@@ -107,6 +116,13 @@ public class Activity2 extends FragmentActivity implements
         criteria.setCostAllowed(true);
         criteria.setPowerRequirement(Criteria.POWER_LOW);
         String bestProvider = locationManager.getBestProvider(criteria, true);
+
+        // API 23 Check: we have to check if ACCESS_FINE_LOCATION and/or ACCESS_COARSE_LOCATION permission are granted
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
         Location location = locationManager.getLastKnownLocation(bestProvider);
         if (location != null) {
             double latitude = location.getLatitude();
