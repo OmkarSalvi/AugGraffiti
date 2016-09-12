@@ -206,6 +206,7 @@ public class Activity2 extends FragmentActivity implements
         final String strEmail = "abhishekpatil369@gmail.com";
         objNearTagService.getNearTags(strEmail,TAG,String.valueOf(longitude),String.valueOf(latitude));
         tagsResonse= objNearTagService.getNearTagsResponse();
+        tagsResonse = "ID1,"+(longitude+1)+","+(latitude+1);
         if(tagsResonse !=""){
             handleNearTagsResult(tagsResonse);
         }

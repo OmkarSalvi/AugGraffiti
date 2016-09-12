@@ -34,6 +34,7 @@ public class nearTagService extends Service {
         return objIBinder;
     }
 
+
     public String getCurrentTime(){
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss", Locale.US);
         //return date object

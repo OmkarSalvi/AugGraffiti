@@ -49,7 +49,14 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Button btnTest = (Button)(findViewById(R.id.btnTest));
+        btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(MainActivity.this, Activity2.class);
+                MainActivity.this.startActivity(myIntent);
+            }
+        });
         //SignIn_Button = (Button) findViewById(R.id.sign_in_button);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         //mStatusTextView = (TextView) findViewById(R.id.status);
