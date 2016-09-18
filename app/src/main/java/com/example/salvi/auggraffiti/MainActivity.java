@@ -9,7 +9,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,6 +29,9 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.server.converter.StringToIntConverter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
@@ -29,15 +39,22 @@ public class MainActivity extends AppCompatActivity implements
 
     private GoogleApiClient mGoogleApiClient;
     //private TextView mStatusTextView;
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = "mainactivity";
     private static final int RC_SIGN_IN = 9001;
     //private Button SignIn_Button;
     public static String User_email;
+    public boolean boolLogin = false;
+    public static final String mainStopTag = "tagMainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Globally defined queue
+        // Create Get a RequestQueue
+        RequestQueue queue = MySingleton.getInstance(this.getApplicationContext()).
+                getRequestQueue();
 
         //SignIn_Button = (Button) findViewById(R.id.sign_in_button);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -82,25 +99,28 @@ public class MainActivity extends AppCompatActivity implements
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             GoogleSignInAccount acct = result.getSignInAccount();
-            String personName = acct.getDisplayName();
-            User_email = acct.getEmail();
-            handleSignInResult(result);
+            if(acct != null) {
+                String personName = acct.getDisplayName();
+                User_email = acct.getEmail();
+
+                handleSignInResult(result);
+            }else{
+                Toast.makeText(this, "SignIn failed!!",Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 
     private void updateUI(boolean signedIn) {
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
             Intent myIntent = new Intent(MainActivity.this, Activity2.class);
             myIntent.putExtra("key", User_email); //Optional parameters
             finish();
             MainActivity.this.startActivity(myIntent);
-        } else {
-           // mStatusTextView.setText(R.string.signed_out);
-
+        }
+        else {
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
 
@@ -109,8 +129,38 @@ public class MainActivity extends AppCompatActivity implements
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            updateUI(true);
+            Log.d(TAG, "userEmail : "+User_email);
+            final String loginURL = "http://roblkw.com/msa/login.php";
+            // Request a string response from the provided URL.
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, loginURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if(Integer.parseInt(response) == 0){
+                                Log.d(TAG, "Response is : " + response);
+                                boolLogin = true;
+                                updateUI(boolLogin);
+                            }else{
+                                updateUI(boolLogin);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d(TAG, "Error occurred in Login request!! Please try later!");
+                }
+            }
+            ){
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params_map = new HashMap<String, String>();
+                    params_map.put("email", User_email);
+                    return params_map;
+                }
+            };
+            // Add the request to the tagQueue.
+            MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+            stringRequest.setTag(mainStopTag);
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
@@ -129,6 +179,14 @@ public class MainActivity extends AppCompatActivity implements
                 signIn();
                 break;
             // ...
+        }
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        if( MySingleton.getInstance(this)!= null){
+            Log.d(TAG,"Inside onstop and inside queue main");
+            MySingleton.getInstance(this).getRequestQueue().cancelAll(mainStopTag);
         }
     }
 }
