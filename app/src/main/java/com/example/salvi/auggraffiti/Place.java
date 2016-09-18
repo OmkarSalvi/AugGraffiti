@@ -47,7 +47,6 @@ public class Place extends Activity {
             }
         });
 
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

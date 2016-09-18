@@ -93,7 +93,6 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity2);
-
             //-------------
 
             // Globally defined queue

@@ -189,4 +189,5 @@ public class MainActivity extends AppCompatActivity implements
             MySingleton.getInstance(this).getRequestQueue().cancelAll(mainStopTag);
         }
     }
+
 }
