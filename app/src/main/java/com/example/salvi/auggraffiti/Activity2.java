@@ -477,6 +477,7 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
                     public void onResult(Status status) {
                         // [START_EXCLUDE]
                         Log.d(TAG, "in signout");
+                        stopUsingGPS();
                         updateUI(false);
                         // [END_EXCLUDE]
                     }
@@ -519,6 +520,17 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
 
         */
 
+    /**
+     * Stop using GPS listener
+     * Calling this function will stop using GPS in your app
+     * */
+    public void stopUsingGPS(){
+        if(locationManager != null){
+            locationManager.removeUpdates(Activity2.this);
+            Log.d(TAG,"stopping GPS");
+        }
+    }
+
     /* onStop gets called when the activity is stopped
     * Clears all request from the queue for this activity
     * */
@@ -529,5 +541,6 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
             Log.d(TAG,"Inside onstop and inside queue activity2");
             MySingleton.getInstance(this).getRequestQueue().cancelAll(actStopTag);
         }
+        //stopUsingGPS();
     }
 }
