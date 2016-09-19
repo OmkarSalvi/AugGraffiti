@@ -36,10 +36,16 @@ public class Place extends Activity {
         status = (TextView) findViewById(R.id.test);
         status.setText(value);
 
+        /* set onclicklistener for button. This listener will listen to the click event on photo button.
+        * When button is clicked camera will be launched and user can take a picture.
+        * */
         this.image = (ImageView)this.findViewById(R.id.imageView1);
         Button photoButton = (Button) this.findViewById(R.id.Camera_Button);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
+            /* This method will create a camera intent and launch the camera activity.
+            * when camera is launched, user can take a picture.
+            * */
             @Override
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -49,6 +55,9 @@ public class Place extends Activity {
 
     }
 
+    /* when camera ctivity is finished, this method will be called to handle the result of activity.
+    * The image captured by the user will be displayed on the screen.
+    * */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");

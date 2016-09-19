@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// Importing the volley parameter's
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -38,10 +39,13 @@ public class MainActivity extends AppCompatActivity implements
         View.OnClickListener {
 
     private GoogleApiClient mGoogleApiClient;
-    //private TextView mStatusTextView;
     private static final String TAG = "mainactivity";
     private static final int RC_SIGN_IN = 9001;
     //private Button SignIn_Button;
+
+    /* Defined variables for user's email
+    * Defined tag to clear all requests of the main activity queue
+    * */
     public static String User_email;
     public boolean boolLogin = false;
     public static final String mainStopTag = "tagMainActivity";
@@ -51,22 +55,25 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Globally defined queue
-        // Create Get a RequestQueue
+        /* defined request queue used to perform login service
+        * */
         RequestQueue queue = MySingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
 
-        //SignIn_Button = (Button) findViewById(R.id.sign_in_button);
+		/*setOnClickListener for listening to click event on sign-in button
+		* */
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        //mStatusTextView = (TextView) findViewById(R.id.status);
 
-        // Configure sign-in to request the user's ID, email address, and basic profile. ID and
-        // basic profile are included in DEFAULT_SIGN_IN.
+        /* Configure sign-in to request the user's ID, email address, and basic profile. ID and
+        * basic profile are included in DEFAULT_SIGN_IN.
+        * */
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
 
-        // Build a GoogleApiClient with access to GoogleSignIn.API and the options above.
+        /* Build a GoogleApiClient with access to GoogleSignIn.API and the options above.
+        *
+        * */
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -76,25 +83,25 @@ public class MainActivity extends AppCompatActivity implements
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setScopes(gso.getScopeArray());
 
-        /*SignIn_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn();
-            }
-        });*/
     }
 
+    /* onConnectionFailed is called when the connection is failed
+    * */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
-
+    /* This method will handle the activity result
+    *  Input: int requestCode, int resultCode, Intent data
+	*  Output: If sign-in successful, call handleSignInResult method to register usr on the web server.
+	*          Else toast will be displayed informing user that sign in attempt failed.
+    * */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
+        super.onActivityResult(requestCode, resultCode, data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -102,20 +109,26 @@ public class MainActivity extends AppCompatActivity implements
             if(acct != null) {
                 String personName = acct.getDisplayName();
                 User_email = acct.getEmail();
-
                 handleSignInResult(result);
-            }else{
+            }
+            else{
                 Toast.makeText(this, "SignIn failed!!",Toast.LENGTH_LONG).show();
             }
-
         }
     }
 
+    /* updateUI method is used to update the user interface depending on its argument value.
+    *  If argument is true, then this method will make sign-in button invisible, create intent of current activity,
+    *  terminate the current activity and launch the new activity, i.e. Activity2
+    *  If argument is false, then it will keep sign-in button visible
+    *  Input: boolean signedIn
+    *  Output: Start new activity or be in current activity
+    * */
     private void updateUI(boolean signedIn) {
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             Intent myIntent = new Intent(MainActivity.this, Activity2.class);
-            myIntent.putExtra("key", User_email); //Optional parameters
+            myIntent.putExtra("key", User_email);
             finish();
             MainActivity.this.startActivity(myIntent);
         }
@@ -124,14 +137,25 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /* handleSignInResult is called when user logs in using google account credentials
+    * Input: googleSignInResult result
+    * Output: update the user's interface based on the boolean value obtained from login request
+    * */
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        //Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             Log.d(TAG, "userEmail : "+User_email);
             final String loginURL = "http://roblkw.com/msa/login.php";
-            // Request a string response from the provided URL.
+            //
+            /* Creating a login request
+            * User get registered if he/she is loging for the first time
+            * Otherwise, user gets his profile paramets such as score on the next page
+            * Request a string response from the provided URL.
+            * Input: user's email Id
+            * Output: boolean value obtained from request
+            * */
             StringRequest stringRequest = new StringRequest(Request.Method.POST, loginURL,
                     new Response.Listener<String>() {
                         @Override
@@ -157,30 +181,39 @@ public class MainActivity extends AppCompatActivity implements
                     params_map.put("email", User_email);
                     return params_map;
                 }
-            };
-            // Add the request to the tagQueue.
+            }; // getParamrs finished
+            /* Adding the tag request to the stringRequest queue
+            * Setting the flag on the stringRequest
+            * */
             MySingleton.getInstance(this).addToRequestQueue(stringRequest);
             stringRequest.setTag(mainStopTag);
-        } else {
+        }
+        else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
         }
     }
 
+    /* signIn method gets called when sign-in button is clicked
+    *  This method starts the sign-in intent.
+    *  The user is prompted to select a Google account to sign in with.
+    * */
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    /* this is on click method which will be called when sign-in button is clicked
+	*  inside this method call to signin() method will be made and in that method sign-in request will be handled.
+    * */
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.sign_in_button:
-                signIn();
-                break;
-            // ...
-        }
+        signIn();
     }
+
+    /* onStop gets called when the activity is stopped
+    * Clears all request from the queue for this activity
+    * */
     @Override
     protected void onStop(){
         super.onStop();

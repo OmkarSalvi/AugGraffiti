@@ -1,5 +1,8 @@
 package com.example.salvi.auggraffiti;
 
+/* This class is created for phase-2 of the application
+*
+* */
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -20,9 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-/**
- * Created by salvi on 9/14/2016.
- */
+
 public class nearTagService extends Service {
 
     public final IBinder objIBinder = new MyLocalBinder();
