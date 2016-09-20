@@ -205,10 +205,12 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
             LatLng latLng = new LatLng(latitude, longitude);
-            myPosition = new LatLng(33.419351, -111.938083);
-            googleMap.addMarker(new MarkerOptions().position(myPosition).title("Start"));
+            marker = googleMap.addMarker(new MarkerOptions().position(latLng).title("Start"));
+            //myposition is a variable which has Coor Hall Location for testing
+            //myPosition = new LatLng(33.419351, -111.938083);
+            //googleMap.addMarker(new MarkerOptions().position(myPosition).title("Start"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(16));
             onLocationChanged(location);
         }
 			/* Requesting location updates from locationManager every 2 seconds using best location provider.
@@ -247,13 +249,19 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
         final double longitude = location.getLongitude();
         LatLng latLng = new LatLng(latitude, longitude);
         //coor hall location
-        myPosition = new LatLng(33.419351, -111.938083);
-        marker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("Start"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
+        //myPosition = new LatLng(33.419351, -111.938083);
+        //marker = googleMap.addMarker(new MarkerOptions().position(myPosition).title("Start"));
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
+
+        marker = googleMap.addMarker(new MarkerOptions().position(latLng).title("Start"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(16));
         currentLocation = new Location("start point");
-        currentLocation.setLatitude(33.419351);
-        currentLocation.setLongitude(-111.938083);
+        currentLocation.setLatitude(latitude);
+        currentLocation.setLongitude(longitude);
+        //Coor hall location for testing
+        //currentLocation.setLatitude(33.419351);
+        //currentLocation.setLongitude(-111.938083);
         //Log.d(TAG,"location = "+ latLng );
         //Log.d(TAG,"Email= "+ Email_used );
 
@@ -286,7 +294,7 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
     * Input: user's email Id obtained from main activity, debug tag, user's coordinates
     * Output: calls the handleNearTag function to handle response obtained
     * */
-    public void getNearTags(final String strEmail,final String TAG, final Double loc_long, final Double loc_lang){
+    public void getNearTags(final String strEmail,final String TAG, final Double loc_long, final Double loc_lat){
 
             /* Setting the URL used to create nearTag post request
             * Logging the value of URL and testing the function
@@ -320,15 +328,13 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
             protected Map<String, String> getParams() {
                 Map<String, String> params_map = new HashMap<String, String>();
                 params_map.put("email", strEmail);
-                        /* Uncomment the below lines while submitting
-                        *----------
-                        * */
-                //params_map.put("loc_long", String.valueOf(loc_long));
-                //params_map.put("loc_lang", String.valueOf(loc_lang));
+
+                params_map.put("loc_long", String.valueOf(loc_long));
+                params_map.put("loc_lat", String.valueOf(loc_lat));
 
                 // Posting the Latti Coor hall coordinates to test further functionality
-                params_map.put("loc_long", String.valueOf(-111.938083));
-                params_map.put("loc_lat", String.valueOf(33.419351));
+                //params_map.put("loc_long", String.valueOf(-111.938083));
+                //params_map.put("loc_lat", String.valueOf(33.419351));
                 return params_map;
             } // getParams function finished
         };
@@ -362,7 +368,8 @@ public class Activity2 extends FragmentActivity implements LocationListener, OnM
             Log.d(TAG,"Empty Tag List" );
         }
 
-        if(response != "") {
+        //if(response != null) {
+        if(response.contains(",")){
                 /* Parsing the response into various parameters
                 * Creating the object of latlng class which is further used to create marker
                 * Adding the marker to taglist so that on the next call we can clear earlier markers
