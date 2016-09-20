@@ -1,3 +1,7 @@
+/* This file contains the Place class. This will be used for placing the tag at current location.
+*  It allows user to place tag on current location and register this tag on the web server.
+ *  As of now we are just allowing user to take picture and display it on screen.
+ */
 package com.example.salvi.auggraffiti;
 
 import android.app.Activity;

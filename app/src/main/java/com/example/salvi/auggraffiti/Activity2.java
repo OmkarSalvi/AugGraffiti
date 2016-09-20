@@ -1,3 +1,8 @@
+/* This file contains the Activity2 class. This is the second activity of the application.
+*  It displays the Map and user's current location on the screen.
+*  It informs user of his score, nearby tags from his current location.
+*  It allows user to do google sign-out.
+ */
 package com.example.salvi.auggraffiti;
 
 import android.app.Activity;

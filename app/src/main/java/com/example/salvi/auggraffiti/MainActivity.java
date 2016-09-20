@@ -1,3 +1,6 @@
+/* This file contains the MainActivity class. This is the first activity of the application.
+*  It allows user to do google sign-in and register user on the web server using login.php
+ */
 package com.example.salvi.auggraffiti;
 
 import android.support.v7.app.AppCompatActivity;

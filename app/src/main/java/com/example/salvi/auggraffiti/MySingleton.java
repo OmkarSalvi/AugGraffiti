@@ -1,3 +1,7 @@
+/* This file includes class MySingleton. It encapsulates RequestQueue and other volley functionality.
+*  we are setting up only single instance of the request queue using this class, that will last the lifetime of our application.
+ */
+
 package com.example.salvi.auggraffiti;
 
 /**

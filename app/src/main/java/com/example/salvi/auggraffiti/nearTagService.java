@@ -1,8 +1,8 @@
-package com.example.salvi.auggraffiti;
-
 /* This class is created for phase-2 of the application
 *
 * */
+package com.example.salvi.auggraffiti;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
