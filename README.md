@@ -1,4 +1,8 @@
 # AugGraffiti
+
+Find the report in branch: release/lab1checkpoint
+Report file : Assignment1_checkpoint1.pdf
+
 AugGraffiti is an augmented reality social art game.
 Gameplay is simple:
 1) As an artist, the user can place 3 graffiti tags in different locations.
