@@ -1,35 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Place">
 
-    <ImageView android:id="@+id/imageView1"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"></ImageView>
+    <FrameLayout
+        android:id="@+id/camera_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/test"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+    </FrameLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="camera"
-        android:id="@+id/Camera_Button"
-        android:layout_above="@+id/test"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/imgClose"
+        android:layout_gravity="right|top"
+        android:background="@android:drawable/btn_default"
+        android:padding="20dp"
+        android:text="PlaceTag" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/mTextView"
-        android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/Camera_Button"
-        android:layout_alignEnd="@+id/Camera_Button" />
-</RelativeLayout>
+    <!--ic_menu_close_clear_cancel-->
+</FrameLayout>
