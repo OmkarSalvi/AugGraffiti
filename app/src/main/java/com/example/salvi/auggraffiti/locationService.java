@@ -1,3 +1,14 @@
+/**
+ * The use of location service enables the background communication for the current activity with
+ * the location and device parameters. Service is used for continuous updation of required variables which
+ * interacts with the user to implement necessary features. The location service basically runs a part of current activity.
+ * The location service is being used in several activities for the smooth working of an application.
+ * This service is binded with given activity on its creation and it’s disconnected on its interruption.
+ * This leads to efficient use of memory and bind service allows the continuous interaction with the user interface.
+ * This service is used to get following parameters.
+ *      Longitude, Latitude, Altitude : 	User’s current location parameters
+ *      Pitch, Roll and Azimuth:	        Rotation around X, Y and Z coordinates respectively
+ */
 package com.example.salvi.auggraffiti;
 
 
