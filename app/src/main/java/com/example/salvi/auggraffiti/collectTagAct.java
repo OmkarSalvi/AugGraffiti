@@ -1,3 +1,16 @@
+/**
+ * This activity is created in order to implement the capture feature of application.
+ * This activity presents user with the tag which user wants to capture and the camera view of the current surroundings.
+ * The tag is embedded on top of camera view to give the feel of augmented reality.
+ * Tag is placed by owner at specific angle and at specific altitude.
+ * In order to collect the tag, user will have to rotate his device to match azimuth(rotation around z-axis and altitude of tag).
+ * These parameters are displayed on top of screen using the location service and the previous activities intent.
+ * On successful matching of these values, Current picture of the camera is taken and the presented tag is placed
+ * on the camera picture. Matched(text) is displaced on both corners and then collect tag request is sent from the user
+ * which uses user’s email, tag id and collected image with tag which is base-64 compressed.
+ * On successful creation of collect tag request and it’s response, user is presented with the toast which gives information of the response.
+ * User’s score is increased on success, otherwise user will be notified with the error/issue.
+ */
 package com.example.salvi.auggraffiti;
 
 import android.content.ComponentName;
