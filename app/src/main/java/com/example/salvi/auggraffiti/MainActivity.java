@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements
         * basic profile are included in DEFAULT_SIGN_IN.
         * */
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+		.requestServerAuthCode("888442725796-edvqlaf4lbu5ntp1buab19lv7qphpahi.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
