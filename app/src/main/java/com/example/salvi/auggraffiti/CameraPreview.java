@@ -1,3 +1,6 @@
+/**
+ * This class is a holder for holding the camera view and providing continuous live camera feedback on screen.
+ */
 package com.example.salvi.auggraffiti;
 
 /**
